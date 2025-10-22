@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
@@ -10,38 +11,44 @@ const camera = new THREE.PerspectiveCamera(
 
 const canvas = document.getElementById('world');
 
-const geometry = new THREE.BoxGeometry(1, 3, 1);
-const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-const cube = new THREE.Mesh(geometry, material);
-cube.position.x = 1;
 
 
-const SphereGeometry = new THREE.SphereGeometry(1, 32, 32);
-const SphereMaterial = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-const Sphere = new THREE.Mesh(SphereGeometry, SphereMaterial);
-Sphere.position.x = -1;
+// const SphereGeometry = new THREE.SphereGeometry(1, 32, 32);
+// const SphereMaterial = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+// const Sphere = new THREE.Mesh(SphereGeometry, SphereMaterial);
+// Sphere.position.x = -1;
+
+const geometry = new THREE.BufferGeometry();
+const vertices = new Float32Array(3000);
+
+for (let i = 0; i < 1000 * 3; i++) {
+  vertices[i] = (Math.random() - 0.5) * 10;
+}
+
+geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+
+const material = new THREE.MeshBasicMaterial( { color: 'red', wireframe: true } );
+const mesh = new THREE.Mesh(geometry, material)
 
 
-const group = new THREE.Group();
-group.add(Sphere);
-group.add(cube);
-group.position.y = 1;
 
-scene.add(group);
+scene.add(mesh);
 
 
 camera.position.z = 5;
 
 const renderer = new THREE.WebGLRenderer( { canvas: canvas } );
 renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setAnimationLoop(animate)
+// renderer.setAnimationLoop(animate)
 
+const controls = new OrbitControls( camera, renderer.domElement );
 
+const clock = new THREE.Clock();
 function animate() {
-  // window.requestAnimationFrame(animate);
-  cube.rotation.x += 0.01;
-  cube.rotation.y += 0.01;
+  window.requestAnimationFrame(animate);
+  // mesh.rotation.x = clock.getElapsedTime();
+  // mesh.rotation.y = clock.getElapsedTime();
+  controls.update();
   renderer.render(scene, camera);
 }
-
-// animate();
+animate();
