@@ -48,3 +48,39 @@ const texture = textureLoader.load('./earth.jpg');
 texture.colorSpace = THREE.SRGBColorSpace;
 
 sphereMaterial.map = texture;
+
+# For Responsiveness
+window.addEventListener('resize', () => {
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+});
+
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+# For adding a hdri
+
+import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader';
+
+hdri = new RGBELoader();
+hdri.load(
+  'https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/river_alcove_1k.hdr',
+  function (hdriTexture) {
+    hdriTexture.mapping = THREE.EquirectangularReflectionMapping;
+    scene.environment = hdriTexture;
+    // scene.background = hdriTexture;
+  }
+);
+
+# For adding 3d models
+
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+
+const loader = new GLTFLoader();
+loader.load(
+  'https://raw.githubusercontent.com/mrdoob/three.js/master/examples/models/gltf/DamagedHelmet/glTF/DamagedHelmet.gltf',
+  function (gltf) {
+    scene.add(gltf.scene);
+  }
+);
+
